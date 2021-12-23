@@ -9,6 +9,10 @@
         super().save_formset(request, form, formset, change)
 ~~~
 
+Essa função tem como objetivo verificar quais os inline possui o model PosOrderReturn e verufuca se houve uma mudança. Caso ambas for verdadeiro, pega o campo do model que possui o nome `requester` e altera para o usuário logado. 
+
+[Documentação do Django](https://docs.djangoproject.com/en/4.0/ref/contrib/admin/)
+
 # formfield_for_foreignkey
 
 ~~~python
@@ -18,6 +22,8 @@
             kwargs["queryset"] = PosOrder.objects.get(id=id).get_items()
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 ~~~
+
+A função `formfield_for_foreignkey` tem como objetivo fazer um filtro nos campos inseridos no admin.py que são `foreignkey`. No exemplo acima a função está verificando se o campo ordem_item está inserido no admin e após a confirmação, pega o ID da página através da função `resolve` e faz um filtro para mostrar um dropdown somente os pedidos referente aquele ID.
 
 # CreateOnlyAdminMixin
 
@@ -33,6 +39,7 @@ class CreateOnlyAdminMixin(object):
     def has_change_permission(self, request, obj=None):
         return False
 ~~~
+CreateOnlyAdminMixin é uma classe modificada do Django pelo o time da MaisTODOS, que tem como objetivo ter uma permissão de adicionar um item novo, não alterar e somente visualizações. 
 
 # admin.TabularInline
 
@@ -50,6 +57,8 @@ class PosOrderItemReturnInline(CreateOnlyAdminMixin, admin.TabularInline):
     )
     readonly_fields = ("requester",)
 ~~~
+
+No admin.py a classe `Inline` recebe como argumento o mixin CreateOnlyAdminMixin para ter as funçãos de adicionar, não alterar e somente visualização.
 
 # def clean - models
 
